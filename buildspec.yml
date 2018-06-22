@@ -7,3 +7,6 @@ phases:
   build:
     commands:
       - cd $CODEBUILD_SRC_DIR; npm run build
+artifacts:
+  files:
+    - build/**/*
