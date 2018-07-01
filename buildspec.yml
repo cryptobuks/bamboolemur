@@ -3,10 +3,11 @@ version: 0.1
 phases:
   install:
     commands:
-      - cd $CODEBUILD_SRC_DIR; npm install
+      - cd $CODEBUILD_SRC_DIR;/web npm install
   build:
     commands:
-      - cd $CODEBUILD_SRC_DIR; npm run build
+      - cd $CODEBUILD_SRC_DIR;/web npm run build
   post_build:
     commands:
+      - aws s3 rm s3://bamboolemur.com --recursive
       - aws s3 sync --delete build s3://bamboolemur.com --cache-control max-age=3600

@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import $ from 'jquery';
-import queryString from 'query-string';
 
 class Join extends Component {
 
@@ -10,8 +9,7 @@ class Join extends Component {
   }
 
   componentDidMount(){
-    const parsed = queryString.parse(this.props.location.search);
-    console.log(parsed.session);
+    console.log(this.props.match.params.sessionId);
 
     // uncahnged code from internet
     var sdpConstraints = { optional: [{RtpDataChannels: true}]  };
