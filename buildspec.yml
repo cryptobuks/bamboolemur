@@ -3,10 +3,10 @@ version: 0.1
 phases:
   install:
     commands:
-      - cd $CODEBUILD_SRC_DIR;/web npm install
+      - cd $CODEBUILD_SRC_DIR/web; npm install
   build:
     commands:
-      - cd $CODEBUILD_SRC_DIR;/web npm run build
+      - cd $CODEBUILD_SRC_DIR/web; npm run build
   post_build:
     commands:
       - aws s3 rm s3://bamboolemur.com --recursive
