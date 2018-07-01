@@ -10,4 +10,4 @@ phases:
   post_build:
     commands:
       - aws s3 rm s3://bamboolemur.com --recursive
-      - aws s3 sync --delete build s3://bamboolemur.com --cache-control max-age=3600
+      - aws s3 sync web/build s3://bamboolemur.com --cache-control max-age=3600
