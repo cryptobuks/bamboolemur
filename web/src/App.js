@@ -3,7 +3,6 @@ import logo from './logo.svg';
 import './App.css';
 import Create from './modules/create';
 import Join from './modules/join';
-import TestMe from './modules/testme';
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
 class App extends Component {
@@ -18,7 +17,6 @@ class App extends Component {
           <div>
             <Route exact path="/" component={Create} />
             <Route path="/join/:sessionId" component={Join} />
-            <Route path="/test" component={TestMe} />
           </div>
         </Router>
       </div>
