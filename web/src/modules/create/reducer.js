@@ -1,4 +1,4 @@
-const createConversation = (state = [], action) => {
+const create = (state = [], action) => {
   switch (action.type) {
     case 'SHOW_TEXT':
       return [
@@ -12,4 +12,4 @@ const createConversation = (state = [], action) => {
   }
 };
 
-export default createConversation;
+export default create;

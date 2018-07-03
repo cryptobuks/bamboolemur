@@ -1,15 +1,18 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { showText } from './actions';
+import { bindActionCreators } from 'redux';
+import { generateSessionId, showText } from './actions';
 import { getText } from './selectors';
 import AWS from 'aws-sdk/global';
 import AWSMqtt from 'aws-mqtt';
 import config from '../../config';
 
+
 class Create extends Component {
 
   componentDidMount(){
     // generate random sessionId
+    this.props.generateSessionId();
     //const topicName = makeId(); // SessionID
 
     AWS.config.region = config.aws.region;
@@ -44,7 +47,7 @@ class Create extends Component {
     return (
       <div>
         <span>{this.props.text}</span>
-        <button id="send" onClick = { e => this.props.dispatch(showText('bla')) } >
+        <button id="send" onClick = { e => this.props.showText('bla') } >
           Show text
         </button>
       </div>
@@ -67,9 +70,10 @@ const mapStateToProps = state => ({
   text: getText(state)
 });
 
-const mapDispatchToProps = dispatch => ({
-  dispatch: dispatch
-});
+const mapDispatchToProps = dispatch => bindActionCreators({
+  generateSessionId,
+  showText
+}, dispatch);
 
 export default connect(
   mapStateToProps,
