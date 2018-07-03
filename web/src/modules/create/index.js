@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { showText } from './actions'
+import { showText } from './actions';
+import { getText } from './selectors';
 
 class Create extends Component {
 
@@ -18,7 +19,7 @@ class Create extends Component {
 }
 
 const mapStateToProps = state => ({
-  text: state.createConversation[0] ? state.createConversation[0].text : ''
+  text: getText(state)
 });
 
 const mapDispatchToProps = dispatch => ({
