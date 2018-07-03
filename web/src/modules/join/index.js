@@ -68,9 +68,9 @@ class Join extends Component {
     return (
       <div>
         <h2>  JOIN WebRTC channel  <span id="status"> init </span> </h2>
-        <h3> 2.GET Offer's SDP</h3>
+        <h3> 2)GET Offers SDP</h3>
         <textarea id="creater-sdp" placeholder="HERE COPY & PASTE [1.CREATE Offer's SDP]"></textarea>
-        <h3> 3.CREATE Participant'S SDP <button id="create">CREATE</button> </h3>
+        <h3> 3)CREATE ParticipantS SDP <button id="create">CREATE</button> </h3>
         <textarea id="joiner-sdp"></textarea>
         <h3> CHAT </h3>
         <div id="chat">
