@@ -1,0 +1,6 @@
+{
+  "command": "SDP_ANSWER",
+  "senderId": 123,
+  "recipientId": 567,
+  "sdpAnswer": "djdjsdjsfjf"
+}
