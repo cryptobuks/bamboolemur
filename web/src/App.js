@@ -16,7 +16,7 @@ class App extends Component {
         <Router>
           <div>
             <Route exact path="/" component={Create} />
-            <Route path="/join/:sessionId" component={Join} />
+            <Route path="/:sessionId" component={Join} />
           </div>
         </Router>
       </div>

@@ -1,4 +1,5 @@
 {
   "command": "JOINING",
-  "senderId": 123
+  "senderId": 123,
+  "recipientId": "all"
 }

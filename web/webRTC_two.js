@@ -25,8 +25,7 @@ function createAnswerSDP() {
   pc.setRemoteDescription(offerDesc)
   pc.createAnswer(function (answerDesc) {
     pc.setLocalDescription(answerDesc)
-  }, function () {console.warn("Couldn't create offer")},
-  sdpConstraints);
+  }, function () {console.warn("Couldn't create offer")},sdpConstraints);
 };
 
 var sendMSG = function() {

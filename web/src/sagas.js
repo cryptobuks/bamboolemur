@@ -1,10 +1,12 @@
 import { all } from 'redux-saga/effects';
-import createSaga from './modules/create/saga';
+import createSaga from './modules/create/sagas';
+import joinSaga from './modules/join/sagas';
 
 // notice how we now only export the rootSaga
 // single entry point to start all Sagas at once
 export default function* rootSaga() {
   yield all([
-    createSaga()
+    createSaga(),
+    joinSaga()
   ])
 }
