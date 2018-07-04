@@ -5,6 +5,9 @@ export const USER_JOINING = 'USER_JOINING';
 export const SDP_ANSWER = 'SDP_ANSWER';
 export const SET_SESSION_ID = 'SET_SESSION_ID';
 export const RESPOND_TO_OFFER = 'RESPOND_TO_OFFER';
+export const SEND_MESSAGE = 'SEND_MESSAGE';
+export const UPDATE_MESSAGE_TEXT = 'UPDATE_MESSAGE_TEXT';
+export const NEW_MESSAGE_RECEIVED = 'NEW_MESSAGE_RECEIVED';
 
 export const generateUserId = () => ({
   type: GENERATE_USER_ID
@@ -45,4 +48,19 @@ export const respondToOffer = (sessionId, senderId, recipientId, offer) => ({
 export const setSessionId = (sessionId) => ({
   type: SET_SESSION_ID,
   sessionId
-})
+});
+
+export const sendMessage = (text) => ({
+  type: SEND_MESSAGE,
+  text
+});
+
+export const updateMessageText = ({target}) => ({
+  type: UPDATE_MESSAGE_TEXT,
+  text: target.value
+});
+
+export const newMessageReceived = (text) => ({
+  type: NEW_MESSAGE_RECEIVED,
+  text
+});

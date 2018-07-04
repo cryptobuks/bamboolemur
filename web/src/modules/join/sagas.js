@@ -12,7 +12,7 @@ AWS.config.credentials = new AWS.CognitoIdentityCredentials({
 });
 
 let mqttClient;
-let pc;
+let pc, dc;
 
 function* initConnToMessBroker() {
   console.log('initConnToMessBroker');
@@ -78,7 +78,7 @@ function* createOffer({ senderId }) {
     console.log('state change:', pc.iceConnectionState);
   };
 
-  const dc = pc.createDataChannel("chat");
+  dc = pc.createDataChannel("chat");
 
   pc.createOffer().then(function(e) {
     pc.setLocalDescription(e)
@@ -90,7 +90,7 @@ function* createOffer({ senderId }) {
 
   dc.onmessage = function(e) {
     if (e.data) {
-      //addMSG(e.data, "other");
+      store.dispatch(actions.newMessageReceived(e.data));
     }
   };
 
@@ -122,17 +122,16 @@ function* respondToOffer({ senderId, offer }) {
 
   var sdpConstraints = { optional: [{RtpDataChannels: true}]  };
   pc = new RTCPeerConnection(null);
-  var dc;
 
   pc.ondatachannel  = function(e) {
     dc = e.channel;
     dc.onopen    = function()  {
-      //$("textarea").attr("disabled",true);addMSG("CONNECTED!", "info");
       console.log('ondatachannel connected');
     };
     dc.onmessage = function(e) {
-      console.log('ondatachannel onmessage');
-      //if (e.data)addMSG(e.data, "other");
+      if (e.data) {
+        store.dispatch(actions.newMessageReceived(e.data));
+      }
     }
   };
 
@@ -163,11 +162,16 @@ function* respondToOffer({ senderId, offer }) {
 
 }
 
+function sendMessage(action){
+  dc.send(action.text);
+}
+
 function* joinSaga() {
   yield takeLatest(actions.INIT_CONN_TO_MESS_BROKER, initConnToMessBroker);
   yield takeLatest(actions.USER_JOINING, createOffer);
   yield takeLatest(actions.SDP_ANSWER, createConnection);
   yield takeLatest(actions.RESPOND_TO_OFFER, respondToOffer);
+  yield takeLatest(actions.SEND_MESSAGE, sendMessage);
 };
 
 export default joinSaga;
