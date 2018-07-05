@@ -3,7 +3,13 @@ export default function JoinChat() {
   var dc = null;
 
   this.initJoiner = function(senderId, answerCallback, receivedMessageCallback) {
-    pc = new RTCPeerConnection(null);
+    var configuration = {
+      'iceServers': [{
+        'urls': 'stun:stun.l.google.com:19302'
+      }]
+    };
+
+    pc = new RTCPeerConnection(configuration);
 
     pc.ondatachannel  = function(e) {dc = e.channel; dcInit(dc)};
     pc.onicecandidate = function(e) {

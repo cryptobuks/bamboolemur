@@ -3,9 +3,13 @@ export default function ChatCreator() {
   var dc = null;
 
   this.initCreator = function(senderId, offerCallback, receivedMessageCallback){
-    console.log('inside initCreator');
+    var configuration = {
+      'iceServers': [{
+        'urls': 'stun:stun.l.google.com:19302'
+      }]
+    };
 
-    pc = new RTCPeerConnection(null);
+    pc = new RTCPeerConnection(configuration);
 
     pc.oniceconnectionstatechange = function(e) {
       var state = pc.iceConnectionState;
