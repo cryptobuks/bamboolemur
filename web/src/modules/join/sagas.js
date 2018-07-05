@@ -15,7 +15,6 @@ let mqttClient;
 let pc, dc;
 
 function* initConnToMessBroker() {
-  console.log('initConnToMessBroker');
   // create iot topic
   const userId = yield select(selectors.getUserId);
 
@@ -31,7 +30,6 @@ function* initConnToMessBroker() {
 
   // subsctibe to topic
   const sessionId = yield select(selectors.getSessionId);
-  console.log('sessionId');
 
   mqttClient.on('connect', () => {
     // send joining message to all
@@ -49,8 +47,8 @@ function* initConnToMessBroker() {
   mqttClient.on('message', (topic, message) => {
     const messageObj = JSON.parse(message);
 
-    if(messageObj.recipientId !== 'all' && messageObj.recipientId !== userId){
-      console.log('ignoring');
+    if((messageObj.recipientId !== 'all' && messageObj.recipientId !== userId) ||
+  messageObj.senderId === userId){
       return;
     }
 
@@ -75,7 +73,6 @@ function* initConnToMessBroker() {
 function* createOffer({ senderId }) {
   pc = new RTCPeerConnection(null);
   pc.oniceconnectionstatechange = function(e) {
-    console.log('state change:', pc.iceConnectionState);
   };
 
   dc = pc.createDataChannel("chat");
@@ -85,7 +82,6 @@ function* createOffer({ senderId }) {
   });
 
   dc.onopen = function(){
-    console.log('connected!');
   };
 
   dc.onmessage = function(e) {
@@ -117,17 +113,12 @@ function createConnection(action) {
 }
 
 function* respondToOffer({ senderId, offer }) {
-
-  console.log('respondToOffer');
-
   var sdpConstraints = { optional: [{RtpDataChannels: true}]  };
   pc = new RTCPeerConnection(null);
 
   pc.ondatachannel  = function(e) {
     dc = e.channel;
-    dc.onopen    = function()  {
-      console.log('ondatachannel connected');
-    };
+    dc.onopen = function() {};
     dc.onmessage = function(e) {
       if (e.data) {
         store.dispatch(actions.newMessageReceived(e.data));
@@ -136,14 +127,11 @@ function* respondToOffer({ senderId, offer }) {
   };
 
   pc.onicecandidate = function(e) {
-    console.log('respondToOffer - onicecandidate');
 
   };
 
   const sessionId = yield select(selectors.getSessionId);
   const userId = yield select(selectors.getUserId);
-
-  console.log('sessionId, userId:', sessionId, ' ',  userId);
 
   pc.setRemoteDescription(JSON.parse(offer));
   pc.createAnswer(function (answerDesc) {
@@ -153,7 +141,7 @@ function* respondToOffer({ senderId, offer }) {
       "command": "SDP_ANSWER",
       "senderId": userId,
       "recipientId": senderId,
-      "sdpAnswer": JSON.stringify(pc.localDescription)
+      "sdpAnswer": JSON.stringify(answerDesc)
     }
 
     mqttClient.publish(sessionId, JSON.stringify(answer));
