@@ -5,6 +5,8 @@ import AWS from 'aws-sdk/global';
 import AWSMqtt from 'aws-mqtt';
 import config from '../../config';
 import store from '../../index';
+import ChatCreator from './create';
+import JoinChat from './join';
 
 AWS.config.region = config.aws.region;
 AWS.config.credentials = new AWS.CognitoIdentityCredentials({
@@ -12,7 +14,8 @@ AWS.config.credentials = new AWS.CognitoIdentityCredentials({
 });
 
 let mqttClient;
-let pc, dc;
+let chatCreator = null;
+let joinChat = null;
 
 function* initConnToMessBroker() {
   // create iot topic
@@ -28,7 +31,6 @@ function* initConnToMessBroker() {
 
   // publish user joining
 
-  // subsctibe to topic
   const sessionId = yield select(selectors.getSessionId);
 
   mqttClient.on('connect', () => {
@@ -40,7 +42,7 @@ function* initConnToMessBroker() {
     }
     mqttClient.publish(sessionId, JSON.stringify(joining));
 
-    // publish to topic
+  // subsctibe to topic
     mqttClient.subscribe(sessionId);
   });
 
@@ -70,88 +72,62 @@ function* initConnToMessBroker() {
   });
 };
 
-function* createOffer({ senderId }) {
-  pc = new RTCPeerConnection(null);
-  pc.oniceconnectionstatechange = function(e) {
-  };
+function receivedMessageCallback(value){
+  store.dispatch(actions.newMessageReceived(value));
+}
 
-  dc = pc.createDataChannel("chat");
+function createOffer({ senderId }) {
+  const offerCallback = function(senderId, offerSDP){
+    console.log('inside offer callback');
+    const sessionId = selectors.getSessionId(store.getState());
+    const userId = selectors.getUserId(store.getState());
 
-  pc.createOffer().then(function(e) {
-    pc.setLocalDescription(e)
-  });
-
-  dc.onopen = function(){
-  };
-
-  dc.onmessage = function(e) {
-    if (e.data) {
-      store.dispatch(actions.newMessageReceived(e.data));
-    }
-  };
-
-  const sessionId = yield select(selectors.getSessionId);
-  const userId = yield select(selectors.getUserId);
-
-  pc.onicecandidate = function(e) {
-    if (e.candidate) return;
     const offer = {
       "command": "OFFER",
       "senderId": userId,
       "recipientId": senderId,
-      "offer": JSON.stringify(pc.localDescription)
+      "offer": offerSDP
     }
-
+    console.log('offer:', offer);
+    console.log('sessionId:', sessionId);
     mqttClient.publish(sessionId, JSON.stringify(offer));
-  }
+  };
 
+  console.log('inside createOffer');
+  chatCreator = new ChatCreator();
+  chatCreator.initCreator(senderId, offerCallback, receivedMessageCallback);
 }
 
 function createConnection(action) {
-  var answerDesc = new RTCSessionDescription(JSON.parse(action.sdpAnswer));
-  pc.setRemoteDescription(answerDesc);
+  chatCreator.start(action.sdpAnswer);
 }
 
-function* respondToOffer({ senderId, offer }) {
-  var sdpConstraints = { optional: [{RtpDataChannels: true}]  };
-  pc = new RTCPeerConnection(null);
+function answerCallback(senderId, answerDesc){
+  const sessionId = selectors.getSessionId(store.getState());
+  const userId = selectors.getUserId(store.getState());
 
-  pc.ondatachannel  = function(e) {
-    dc = e.channel;
-    dc.onopen = function() {};
-    dc.onmessage = function(e) {
-      if (e.data) {
-        store.dispatch(actions.newMessageReceived(e.data));
-      }
-    }
-  };
+  const answer = {
+    "command": "SDP_ANSWER",
+    "senderId": userId,
+    "recipientId": senderId,
+    "sdpAnswer": answerDesc
+  }
 
-  pc.onicecandidate = function(e) {
+  mqttClient.publish(sessionId, JSON.stringify(answer));
+}
 
-  };
-
-  const sessionId = yield select(selectors.getSessionId);
-  const userId = yield select(selectors.getUserId);
-
-  pc.setRemoteDescription(JSON.parse(offer));
-  pc.createAnswer(function (answerDesc) {
-    pc.setLocalDescription(answerDesc);
-
-    const answer = {
-      "command": "SDP_ANSWER",
-      "senderId": userId,
-      "recipientId": senderId,
-      "sdpAnswer": JSON.stringify(answerDesc)
-    }
-
-    mqttClient.publish(sessionId, JSON.stringify(answer));
-
-  }, function () {console.warn("Couldn't create offer")},sdpConstraints);
-
+function respondToOffer({ senderId, offer }) {
+  joinChat = new JoinChat();
+  joinChat.initJoiner(senderId, answerCallback, receivedMessageCallback);
+  joinChat.createAnswerSDP(offer);
 }
 
 function sendMessage(action){
-  dc.send(action.text);
+  if(chatCreator !== null){
+    chatCreator.sendMSG(action.text);
+  } else if(joinChat != null){
+    joinChat.sendMSG(action.text);
+  }
 }
 
 function* joinSaga() {
