@@ -1,14 +1,10 @@
+import configuration from './stun';
+
 export default function JoinChat() {
   var pc = null;
   var dc = null;
 
   this.initJoiner = function(senderId, answerCallback, receivedMessageCallback) {
-    var configuration = {
-      'iceServers': [{
-        'urls': 'stun:stun.l.google.com:19302'
-      }]
-    };
-
     pc = new RTCPeerConnection(configuration);
 
     pc.ondatachannel  = function(e) {dc = e.channel; dcInit(dc)};

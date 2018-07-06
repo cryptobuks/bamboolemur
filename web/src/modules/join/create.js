@@ -1,14 +1,10 @@
+import configuration from './stun';
+
 export default function ChatCreator() {
   var pc = null;
   var dc = null;
 
   this.initCreator = function(senderId, offerCallback, receivedMessageCallback){
-    var configuration = {
-      'iceServers': [{
-        'urls': 'stun:stun.l.google.com:19302'
-      }]
-    };
-
     pc = new RTCPeerConnection(configuration);
 
     pc.oniceconnectionstatechange = function(e) {
