@@ -125,7 +125,8 @@ function respondToOffer({ senderId, offer }) {
 function sendMessage(action){
   if(chatCreator !== null){
     chatCreator.sendMSG(action.text);
-  } else if(joinChat != null){
+  }
+  if(joinChat != null){
     joinChat.sendMSG(action.text);
   }
 }

@@ -15,18 +15,30 @@ class Join extends Component {
     this.props.initConnToMessBroker();
   }
 
+  onEnterPress = (e) => {
+    if(e.keyCode === 13 && e.shiftKey === false) {
+      e.preventDefault();
+      this.props.sendMessage(this.props.messageText)
+    }
+  }
+
   render() {
     return (
       <div id="chat">
-        <div id="chat-screen-wp">
-          <div id="chat-screen">
-            {this.props.messages.map((message, i) => <div key={i}>{message}</div>)}
-          </div>
+        <div id="messages">
+          {
+            this.props.messages.map(
+              (message, i) => <div className={"message" + (message.me ? " me" : "")} key={i}>{message.text}</div>
+            )
+          }
         </div>
-        <div id="ct">
-          <input id="msg" value = { this.props.messageText }
-            onChange={ this.props.updateMessageText }/>
-          <button id="send" onClick = { () => this.props.sendMessage(this.props.messageText) }>send</button>
+        <div id="new-message">
+          <textarea placeholder="Send new message..."
+          id="new-message-input"
+          onChange={ this.props.updateMessageText }
+          onKeyDown={ this.onEnterPress }
+          value= { this.props.messageText }
+          />
         </div>
       </div>
     );
