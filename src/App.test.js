@@ -6,7 +6,7 @@ import { createStore } from 'redux';
 import { Map, List } from 'immutable';
 
 const initialState = Map({
-  create: Map({}),
+  create: Map(),
   join: Map({
     messages: List(),
     messageText: ''
