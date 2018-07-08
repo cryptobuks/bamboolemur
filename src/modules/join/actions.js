@@ -8,6 +8,7 @@ export const RESPOND_TO_OFFER = 'RESPOND_TO_OFFER';
 export const SEND_MESSAGE = 'SEND_MESSAGE';
 export const UPDATE_MESSAGE_TEXT = 'UPDATE_MESSAGE_TEXT';
 export const NEW_MESSAGE_RECEIVED = 'NEW_MESSAGE_RECEIVED';
+export const UPDATE_STATUS = 'UPDATE_STATUS';
 
 export const generateUserId = () => ({
   type: GENERATE_USER_ID
@@ -63,4 +64,9 @@ export const updateMessageText = ({target}) => ({
 export const newMessageReceived = (text) => ({
   type: NEW_MESSAGE_RECEIVED,
   text
+});
+
+export const updateStatus = (status) => ({
+  type: UPDATE_STATUS,
+  status
 });

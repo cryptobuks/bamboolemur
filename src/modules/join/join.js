@@ -4,7 +4,8 @@ export default function JoinChat() {
   var pc = null;
   var dc = null;
 
-  this.initJoiner = function(senderId, answerCallback, receivedMessageCallback) {
+  this.initJoiner = function(senderId, answerCallback, receivedMessageCallback,
+    statusCallback) {
     pc = new RTCPeerConnection(configuration);
 
     pc.ondatachannel  = function(e) {dc = e.channel; dcInit(dc)};
@@ -16,9 +17,7 @@ export default function JoinChat() {
 
     pc.oniceconnectionstatechange = function(e) {
       var state = pc.iceConnectionState
-      if (state === "connected") {
-        console.log('JoinChat: connected I');
-      }
+      statusCallback(state);
     };
 
     function dcInit(dc) {

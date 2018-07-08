@@ -4,12 +4,13 @@ export default function ChatCreator() {
   var pc = null;
   var dc = null;
 
-  this.initCreator = function(senderId, offerCallback, receivedMessageCallback){
+  this.initCreator = function(senderId, offerCallback, receivedMessageCallback,
+    statusCallback){
     pc = new RTCPeerConnection(configuration);
 
     pc.oniceconnectionstatechange = function(e) {
       var state = pc.iceConnectionState;
-      console.log('create: state: ', state);
+      statusCallback(state);
     };
 
     pc.onicecandidate = function(e) {

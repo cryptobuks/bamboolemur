@@ -7,7 +7,7 @@ import { connect } from 'react-redux';
 class Join extends Component {
 
   componentDidMount(){
-    // set sessionId
+    // set sessionId TODO: reducer should do that
     this.props.setSessionId(this.props.sessionId);
     // generate userId
     this.props.generateUserId();
@@ -25,6 +25,9 @@ class Join extends Component {
   render() {
     return (
       <div id="chat">
+      <div className="alert alert-info" role="alert">
+        <strong>Connection status: </strong> {this.props.connectionStatus}
+      </div>
         <div id="messages">
           {
             this.props.messages.map(
@@ -48,7 +51,8 @@ class Join extends Component {
 const mapStateToProps = (state, props) => ({
   sessionId: '/' + props.match.params.sessionId,
   messages: selectors.getMessages(state),
-  messageText: selectors.getMessageText(state)
+  messageText: selectors.getMessageText(state),
+  connectionStatus: selectors.getConnectionStatus(state)
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators(actions, dispatch);

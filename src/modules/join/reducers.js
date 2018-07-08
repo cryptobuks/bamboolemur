@@ -3,7 +3,8 @@ import * as actions from './actions';
 
 const initialState = Map({
   messages: List(),
-  messageText: ''
+  messageText: '',
+  connectionStatus: 'waiting'
 });
 
 const join = (state = initialState, action) => {
@@ -27,6 +28,8 @@ const join = (state = initialState, action) => {
         text: action.text,
         me: false
       }));
+    case actions.UPDATE_STATUS:
+      return state.set('connectionStatus', action.status);
     default:
       return state
   }

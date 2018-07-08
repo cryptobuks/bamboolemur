@@ -76,6 +76,10 @@ function receivedMessageCallback(value){
   store.dispatch(actions.newMessageReceived(value));
 }
 
+function statusCallback(status) {
+  store.dispatch(actions.updateStatus(status));
+}
+
 function createOffer({ senderId }) {
   const offerCallback = function(senderId, offerSDP){
     console.log('inside offer callback');
@@ -95,7 +99,8 @@ function createOffer({ senderId }) {
 
   console.log('inside createOffer');
   chatCreator = new ChatCreator();
-  chatCreator.initCreator(senderId, offerCallback, receivedMessageCallback);
+  chatCreator.initCreator(senderId, offerCallback, receivedMessageCallback,
+    statusCallback);
 }
 
 function createConnection(action) {
@@ -118,7 +123,8 @@ function answerCallback(senderId, answerDesc){
 
 function respondToOffer({ senderId, offer }) {
   joinChat = new JoinChat();
-  joinChat.initJoiner(senderId, answerCallback, receivedMessageCallback);
+  joinChat.initJoiner(senderId, answerCallback, receivedMessageCallback,
+    statusCallback);
   joinChat.createAnswerSDP(offer);
 }
 
